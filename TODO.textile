@@ -1,0 +1,5 @@
+* update the README
+* allow filter by date range
+* create tests
+* create shoulda macros
+

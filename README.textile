@@ -1,0 +1,86 @@
+h1. Filter Table
+
+An easy way to include links with default filters for HTML tables in your Rails app.
+
+h2. Install
+
+    script/plugin install git://github.com/flaviogranero/filter_table.git
+
+h2. Controller
+
+<pre><code>
+  class CarsController < ApplicationController
+    filter_attributes :status
+
+    def index
+      @cars = Car.paginate :page => params[:page], :conditions => filter_conditions
+    end
+  end
+</code></pre>
+
+The filter_attributes defines a filter_conditions method that gets called in your action. 
+This method returns the query conditions based in params of request.
+
+h2. View
+
+<pre><code>
+  <h1>Cars</h1>
+  <div>
+    <h2>Filters</h2>
+    <%= filter_links_for :status, :values => {'Normal' => 0, 'Broken' => 1, 'Running away' => 2} %>
+  </div>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Status</th>
+      <th>Category</th>
+    </tr>
+    <% @cars.each do |car| %>
+      <tr>
+        <td><%=h car.name %></td>
+        <td><%= car.status %></td>
+        <td><%= car.category %></td>
+      </tr>
+    <% end %>
+  </table>
+</code></pre>
+
+The filter_links_for generates a html list containing a link for each filter value. Also, is allowed the param :title to informe a display name for the list, and the list item active has a css class "filter_active", but you can change this using the :active_class param.
+The param :values can receive an array of values or, if you want to create a list based on distinct values existent in database, use the keywork :auto. See the example below, with filter links for category attribute:
+
+<pre><code>
+  <h1>Cars</h1>
+  <div>
+    <h2>Filters</h2>
+    <%= filter_links_for :status, :values => {'Normal' => 0, 'Broken' => 1, 'Running away' => 2} %>
+    <%= filter_links_for :category, :values => :auto, :model => 'Car' %>
+  </div>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Status</th>
+      <th>Category</th>
+    </tr>
+    <% @cars.each do |car| %>
+      <tr>
+        <td><%=h car.name %></td>
+        <td><%= car.status %></td>
+        <td><%= car.category %></td>
+      </tr>
+    <% end %>
+  </table>
+</code></pre>
+
+At this case, a :model param is required and a query will be created to get all the values.
+
+Version 0.1 
+-----------
+
+February 26, 2009
+
+Author
+-------
+
+Flávio Granero - http://flaviogranero.com
+
+Copyright (c) 2009 Flávio Granero, released under the MIT license
