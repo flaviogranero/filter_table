@@ -33,7 +33,7 @@ module FilterTable
 
           def load_distinct_values(field,model_name)
             klass = eval(model_name)
-            klass.find_by_sql("SELECT DISTINCT #{field} from #{klass.table_name}").map(&field) if klass
+            klass.find(:all,:select => "DISTINCT #{field}").map(&field) if klass
           end
           
           def prepare_values(values)
@@ -43,9 +43,12 @@ module FilterTable
             values.delete_if{|name,value| name.nil?}
             #prepare array of values, everything as string
             values.map do |name,value|
-              value = value.nil? ? name : value.to_s
+              value = value.nil? ? name.dup : value.to_s
+              #blank values are changed to -blank- keyword
               name  = BLANK_FILTER if name.blank? 
               value = BLANK_FILTER if value.blank?
+              #spaces in values must be sub to --
+              value.gsub! ' ', '--'
               [name,value]
             end
           end

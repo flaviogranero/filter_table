@@ -23,6 +23,8 @@ module FilterTable
                 if acceptable_columns.include? key
                   conditions[key] = value.split
                   conditions[key] << '' if conditions[key].delete BLANK_FILTER
+                  #replace -- by space char
+                  conditions[key].collect{|value| value.gsub! '--', ' '}
                 end
               end
               conditions
